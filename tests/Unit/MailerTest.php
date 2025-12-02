@@ -25,7 +25,7 @@ class MailerTest extends NixPHPTestCase
             ->setFrom('from@example.com')
             ->setReplyTo('reply@example.com')
             ->setSubject('Test Subject')
-            ->setContent('Hello World', false);;
+            ->setContent('Hello World', false);
 
         $this->assertSame(['to@example.com'], $mail->getRecipients());
         $this->assertSame(['cc@example.com'], $mail->getCc());
@@ -40,7 +40,7 @@ class MailerTest extends NixPHPTestCase
     public function testReplyToFallsBackToFromWhenNotSet(): void
     {
         $mailer = new Mailer(new MailTransport());
-        $mail   = $mailer->createMail()->setFrom('from@example.com');;
+        $mail   = $mailer->createMail()->setFrom('from@example.com');
 
         $this->assertSame('from@example.com', $mail->getReplyTo());
     }
@@ -83,7 +83,7 @@ class MailerTest extends NixPHPTestCase
         $this->assertSame(true, $attachment['inline']);
         $this->assertNotEmpty($attachment['mimetype']);
 
-        @unlink($tmpFile);
+        $this->tempFiles[] = $tmpFile;
     }
 
     public function testSendDelegatesToTransportAndReturnsTrue(): void

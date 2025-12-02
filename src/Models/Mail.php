@@ -24,10 +24,13 @@ class Mail
      * Add a primary recipient to the email.
      *
      * @param string $address The recipient's email address
+     *
      * @return static Returns the Mail instance for method chaining
+     * @throws MailException
      */
     public function addTo(string $address): static
     {
+        $this->validateEmail($address);
         $this->recipients[] = $address;
         return $this;
     }
@@ -39,10 +42,13 @@ class Mail
      * will be visible to all other recipients.
      *
      * @param string $address The CC recipient's email address
+     *
      * @return static Returns the Mail instance for method chaining
+     * @throws MailException
      */
     public function addCc(string $address): static
     {
+        $this->validateEmail($address);
         $this->carbonCopies[] = $address;
         return $this;
     }
@@ -54,10 +60,13 @@ class Mail
      * will not be visible to other recipients.
      *
      * @param string $address The BCC recipient's email address
+     *
      * @return static Returns the Mail instance for method chaining
+     * @throws MailException
      */
     public function addBcc(string $address): static
     {
+        $this->validateEmail($address);
         $this->blindCarbonCopies[] = $address;
         return $this;
     }
@@ -66,10 +75,13 @@ class Mail
      * Set the sender's email address.
      *
      * @param string $address The sender's email address
+     *
      * @return static Returns the Mail instance for method chaining
+     * @throws MailException
      */
     public function setFrom(string $address): static
     {
+        $this->validateEmail($address);
         $this->from = $address;
         return $this;
     }
@@ -81,10 +93,13 @@ class Mail
      * If not set, replies will go to the sender's address.
      *
      * @param string $address The reply-to email address
+     *
      * @return static Returns the Mail instance for method chaining
+     * @throws MailException
      */
     public function setReplyTo(string $address): static
     {
+        $this->validateEmail($address);
         $this->replyTo = $address;
         return $this;
     }
@@ -133,11 +148,23 @@ class Mail
             throw new MailException("Attachment file not found: $path");
         }
 
+        $contents = file_get_contents($path);
+
+        if ($contents === false) {
+            throw new MailException("Failed to read attachment file: $path");
+        }
+
+        $mimeType = mime_content_type($path);
+
+        if ($mimeType === false) {
+            $mimeType = 'application/octet-stream';
+        }
+
         $this->attachments[] = [
             'name'     => $name,
             'path'     => $path,
-            'encoded'  => chunk_split(base64_encode(file_get_contents($path))),
-            'mimetype' => mime_content_type($path),
+            'encoded'  => chunk_split(base64_encode($contents)),
+            'mimetype' => $mimeType,
             'inline'   => $inline,
         ];
 
@@ -234,6 +261,13 @@ class Mail
     public function getAttachments(): array
     {
         return $this->attachments;
+    }
+
+    private function validateEmail(string $email): void
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new MailException("Invalid email address: $email");
+        }
     }
 
 }

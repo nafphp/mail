@@ -91,7 +91,7 @@ class MailTransportTest extends NixPHPTestCase
         );
         $this->assertStringContainsString('Content-Transfer-Encoding: base64', $body);
 
-        @unlink($tmpFile);
+        $this->tempFiles[] = $tmpFile;
     }
 
     public function testSendMailThrowsExceptionWhenMailReturnsFalse(): void

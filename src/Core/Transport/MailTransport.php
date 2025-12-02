@@ -13,6 +13,12 @@ class MailTransport implements TransportInterface
 {
     use MailMessageRenderer;
 
+    /**
+     * @param Mail $mail
+     *
+     * @return bool
+     * @throws MailException
+     */
     public function sendMail(Mail $mail): bool
     {
         [
