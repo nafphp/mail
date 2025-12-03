@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NixPHP\Mail\Core;
+
+use NixPHP\Mail\Models\Mail;
 
 interface TransportInterface
 {
 
-    public function sendMail(Mailer $mailer);
+    /**
+     * @param Mail $mail
+     *
+     * @return bool
+     */
+    public function sendMail(Mail $mail): bool;
 
 }

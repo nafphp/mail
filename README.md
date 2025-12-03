@@ -14,7 +14,7 @@
 
 > **A lightweight, extensible mailer system for NixPHP – with full transport abstraction and attachment support.**
 
-This plugin provides a clean interface for sending emails in your NixPHP application. It includes a default `MailTransport` that uses PHP’s built-in `mail()` function – but can easily be swapped for SMTP, API-based services, or other custom transports.
+This plugin provides a clean interface for sending emails in your NixPHP application. It includes a default `MailTransport` that uses PHP’s built-in `mail()` function, but can easily be swapped for SMTP, API-based services, or other custom transports.
 
 > 🧩 Part of the official NixPHP plugin collection. Install it if you need flexible, framework-integrated email handling.
 
@@ -22,11 +22,11 @@ This plugin provides a clean interface for sending emails in your NixPHP applica
 
 ## 📦 Features
 
-✅ Compose and send emails with fluent API
-✅ Supports `To`, `Cc`, `Bcc`, `Reply-To`, and `Attachments`
-✅ Sends HTML or plain text
-✅ Fully transport-driven – extend or swap backend logic
-✅ Ships with default `MailTransport` using native PHP `mail()`
+- ✅ Compose and send emails with fluent API
+- ✅ Supports `To`, `Cc`, `Bcc`, `Reply-To`, and `Attachments`
+- ✅ Sends HTML or plain text
+- ✅ Fully transport-driven, extend, or swap backend logic
+- ✅ Ships with default `MailTransport` using native PHP `mail()`
 
 ---
 
@@ -43,12 +43,13 @@ composer require nixphp/mail
 ### 📤 Basic mail sending
 
 ```php
-mailer()
+$mail = mail()
     ->setFrom('hello@example.com')
     ->addTo('john@example.com')
     ->setSubject('Hello from NixPHP')
-    ->setContent('<b>Welcome!</b>', true)
-    ->send();
+    ->setContent('<b>Welcome!</b>', true);
+
+mailer()->send($mail);
 ```
 
 ---
@@ -56,12 +57,13 @@ mailer()
 ### 📎 Add attachments
 
 ```php
-mailer()
+$mail = mail()
     ->setFrom('info@example.com')
     ->addTo('client@example.com')
     ->setSubject('Monthly Report')
     ->addAttachment('report.pdf', '/path/to/report.pdf')
-    ->send();
+
+mailer()->send($mail);
 ```
 
 You can also attach images inline and reference them via `cid:`:
@@ -82,7 +84,8 @@ use NixPHP\Mail\Mailer;
 use App\Mail\MyCustomTransport;
 
 $mailer = new Mailer(new MyCustomTransport());
-$mailer->addTo('john@example.com')->send();
+$mail   = mail()->addTo('john@example.com');
+$mailer->send($mail);
 ```
 
 Your transport must implement:
@@ -95,8 +98,8 @@ NixPHP\Mail\Core\TransportInterface
 
 ## ✅ Requirements
 
-* `nixphp/framework` >= 1.0
-* PHP >= 8.1
+* `nixphp/framework` >= 0.1.0
+* PHP >= 8.3
 
 ---
 
