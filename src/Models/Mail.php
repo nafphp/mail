@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail\Models;
+namespace Naf\Mail\Models;
 
-use NixPHP\Mail\Exceptions\MailException;
+use Naf\Mail\Exceptions\MailException;
 
 class Mail
 {

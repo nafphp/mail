@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use NixPHP\Mail\Core\Mailer;
-use NixPHP\Mail\Core\Transport\MailTransport;
-use function NixPHP\app;
+use Naf\Mail\Core\Mailer;
+use Naf\Mail\Core\Transport\MailTransport;
+use function Naf\app;
 
 app()->container()->set(Mailer::class, fn() => new Mailer(new MailTransport()));

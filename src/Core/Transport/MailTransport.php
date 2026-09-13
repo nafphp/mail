@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail\Core\Transport;
+namespace Naf\Mail\Core\Transport;
 
-use NixPHP\Mail\Core\Transport\Trait\MailMessageRenderer;
-use NixPHP\Mail\Core\TransportInterface;
-use NixPHP\Mail\Exceptions\MailException;
-use NixPHP\Mail\Models\Mail;
+use Naf\Mail\Core\Transport\Trait\MailMessageRenderer;
+use Naf\Mail\Core\TransportInterface;
+use Naf\Mail\Exceptions\MailException;
+use Naf\Mail\Models\Mail;
 
 class MailTransport implements TransportInterface
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail\Core;
+namespace Naf\Mail\Core;
 
-use NixPHP\Mail\Models\Mail;
+use Naf\Mail\Models\Mail;
 
 interface TransportInterface
 {

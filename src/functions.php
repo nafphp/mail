@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail;
+namespace Naf\Mail;
 
-use NixPHP\Mail\Core\Mailer;
-use NixPHP\Mail\Models\Mail;
-use function NixPHP\app;
+use Naf\Mail\Core\Mailer;
+use Naf\Mail\Models\Mail;
+use function Naf\app;
 
 /**
  * @return Mailer

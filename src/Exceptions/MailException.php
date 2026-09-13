@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail\Exceptions;
+namespace Naf\Mail\Exceptions;
 
 class MailException extends \Exception
 {

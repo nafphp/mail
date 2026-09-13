@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use NixPHP\Mail\Core\Mailer;
-use NixPHP\Mail\Core\Transport\MailTransport;
-use NixPHP\Mail\Exceptions\MailException;
-use Tests\NixPHPTestCase;
+use Naf\Mail\Core\Mailer;
+use Naf\Mail\Core\Transport\MailTransport;
+use Naf\Mail\Exceptions\MailException;
+use Tests\NafTestCase;
 
 require_once __DIR__ . '/../Fixtures/MailFunctionStub.php';
 
-class MailTransportTest extends NixPHPTestCase
+class MailTransportTest extends NafTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $GLOBALS['__nixphp_mail_return__'] = true;
-        unset($GLOBALS['__nixphp_last_mail__']);
+        $GLOBALS['__naf_mail_return__'] = true;
+        unset($GLOBALS['__naf_last_mail__']);
     }
 
     public function testSendMailBuildsHeadersAndBodyAndCallsMail(): void
@@ -36,9 +36,9 @@ class MailTransportTest extends NixPHPTestCase
         $result = $mailer->send($mail);
 
         $this->assertTrue($result);
-        $this->assertArrayHasKey('__nixphp_last_mail__', $GLOBALS);
+        $this->assertArrayHasKey('__naf_last_mail__', $GLOBALS);
 
-        $call = $GLOBALS['__nixphp_last_mail__'];
+        $call = $GLOBALS['__naf_last_mail__'];
 
         $this->assertSame('to@example.com', $call['to']);
 
@@ -63,7 +63,7 @@ class MailTransportTest extends NixPHPTestCase
 
     public function testSendMailIncludesAttachmentsInBody(): void
     {
-        $tmpFile = tempnam(sys_get_temp_dir(), 'nixphp_mail_');
+        $tmpFile = tempnam(sys_get_temp_dir(), 'naf_mail_');
         $this->assertNotFalse($tmpFile, 'Temp file could not be created');
 
         file_put_contents($tmpFile, 'attachment content');
@@ -80,7 +80,7 @@ class MailTransportTest extends NixPHPTestCase
 
         $this->assertTrue($result);
 
-        $call = $GLOBALS['__nixphp_last_mail__'] ?? null;
+        $call = $GLOBALS['__naf_last_mail__'] ?? null;
         $this->assertNotNull($call);
 
         $body = $call['message'];
@@ -96,7 +96,7 @@ class MailTransportTest extends NixPHPTestCase
 
     public function testSendMailThrowsExceptionWhenMailReturnsFalse(): void
     {
-        $GLOBALS['__nixphp_mail_return__'] = false;
+        $GLOBALS['__naf_mail_return__'] = false;
 
         $mailer = new Mailer(new MailTransport());
         $mail   = $mailer->createMail()
@@ -111,7 +111,7 @@ class MailTransportTest extends NixPHPTestCase
         try {
             $mailer->send($mail);
         } finally {
-            $GLOBALS['__nixphp_mail_return__'] = true;
+            $GLOBALS['__naf_mail_return__'] = true;
         }
     }
 }

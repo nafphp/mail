@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NixPHP\Mail\Core\Transport\Trait;
+namespace Naf\Mail\Core\Transport\Trait;
 
-use NixPHP\Mail\Models\Mail;
+use Naf\Mail\Models\Mail;
 
 trait MailMessageRenderer
 {

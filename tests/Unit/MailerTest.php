@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use NixPHP\Mail\Core\Mailer;
-use NixPHP\Mail\Core\Transport\MailTransport;
-use NixPHP\Mail\Core\TransportInterface;
-use NixPHP\Mail\Exceptions\MailException;
-use NixPHP\Mail\Models\Mail;
-use Tests\NixPHPTestCase;
+use Naf\Mail\Core\Mailer;
+use Naf\Mail\Core\Transport\MailTransport;
+use Naf\Mail\Core\TransportInterface;
+use Naf\Mail\Exceptions\MailException;
+use Naf\Mail\Models\Mail;
+use Tests\NafTestCase;
 
-class MailerTest extends NixPHPTestCase
+class MailerTest extends NafTestCase
 {
     public function testFluentSettersAndGettersWorkAsExpected(): void
     {
-        $transport = $this->createMock(TransportInterface::class);
+        $transport = $this->createStub(TransportInterface::class);
 
         $mailer = new Mailer($transport);
         $mail   = $mailer->createMail()
@@ -61,7 +61,7 @@ class MailerTest extends NixPHPTestCase
         $mailer = new Mailer(new MailTransport());
         $mail   = $mailer->createMail();
 
-        $tmpFile = tempnam(sys_get_temp_dir(), 'nixphp_mail_');
+        $tmpFile = tempnam(sys_get_temp_dir(), 'naf_mail_');
         $this->assertNotFalse($tmpFile, 'Failed to create temp file');
 
         file_put_contents($tmpFile, 'dummy content');
@@ -109,11 +109,11 @@ class MailerTest extends NixPHPTestCase
 
     public function testMailerHelperFunction()
     {
-        $this->assertInstanceOf(Mailer::class, \NixPHP\Mail\mailer());
+        $this->assertInstanceOf(Mailer::class, \Naf\Mail\mailer());
     }
 
     public function testMailHelperFunctions()
     {
-        $this->assertInstanceOf(Mail::class, \NixPHP\Mail\mail());
+        $this->assertInstanceOf(Mail::class, \Naf\Mail\mail());
     }
 }
