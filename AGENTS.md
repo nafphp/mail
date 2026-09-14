@@ -25,25 +25,19 @@ For local tests, replace the mailer binding in host bootstrap before consumers r
 
 ```php
 <?php
-use Naf\Mail\Core\{Mailer, TransportInterface};
-use Naf\Mail\Models\Mail;
+use Naf\Mail\Core\Mailer;
+use Naf\Mail\Core\Transport\DummyTransport;
 use function Naf\app;
 
-$transport = new class implements TransportInterface {
-    public array $messages = [];
-    public function sendMail(Mail $mail): bool
-    {
-        $this->messages[] = clone $mail;
-        return true;
-    }
-};
+$transport = new DummyTransport();
 app()->container()->set(Mailer::class, static fn() => new Mailer($transport));
 ```
 
 Application code can keep using `mail()->setFrom(...)->addTo(...)->setSubject(...)` and
 `mailer()->send($message)`. `setContent($body)` means HTML; pass `false` for plain text.
-The dummy is application code, not a shipped class; its captures last only for this process.
-See the complete documented dummy/file-outbox examples for reusable test setups.
+`DummyTransport` is shipped since 0.2.2. Inspect captures with `$transport->getMessages()`;
+`clear()` discards them between tests or worker jobs. Messages are cloned when sent and kept
+only in memory. For previews across browser requests, see the documented file-outbox recipe.
 
 ## Change it here
 
