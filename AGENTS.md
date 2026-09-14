@@ -21,33 +21,56 @@ The default transport calls PHP's `mail()` and needs an actual delivery setup.
 
 ## Use it
 
-For local tests, replace the mailer binding in host bootstrap before consumers resolve it:
+Since 0.2.2, choose a transport class in `app/config.php`:
 
 ```php
 <?php
-use Naf\Mail\Core\Mailer;
-use Naf\Mail\Core\Transport\DummyTransport;
-use function Naf\app;
+use Naf\Mail\Core\Transport\MailTransport;
 
-$transport = new DummyTransport();
-app()->container()->set(Mailer::class, static fn() => new Mailer($transport));
+return ['mail' => ['transport' => MailTransport::class]];
 ```
 
-Application code can keep using `mail()->setFrom(...)->addTo(...)->setSubject(...)` and
-`mailer()->send($message)`. `setContent($body)` means HTML; pass `false` for plain text.
-`DummyTransport` is shipped since 0.2.2. Inspect captures with `$transport->getMessages()`;
-`clear()` discards them between tests or worker jobs. Messages are cloned when sent and kept
-only in memory. For previews across browser requests, see the documented file-outbox recipe.
+The plugin supplies this default; it calls PHP's `mail()`. The selected class must implement
+`TransportInterface`. `Mailer` uses its container binding when registered, otherwise `make()`
+autowires it. Register scalar configuration or interface dependencies before consumers resolve
+the mailer. Invalid configuration or failed construction raises an exception; there is no
+fallback transport. Configuration contains a class name, never a transport instance.
+
+For a local test, pass the shipped dummy directly:
+
+```php
+<?php
+use Naf\Mail\Core\Transport\DummyTransport;
+use function Naf\Mail\mailer;
+
+$transport = new DummyTransport();
+$mailer = mailer($transport);
+$message = $mailer->createMail()
+    ->setFrom('hello@example.com')
+    ->addTo('reader@example.com')
+    ->setContent('Hello', false);
+$mailer->send($message);
+$messages = $transport->getMessages();
+$transport->clear();
+```
+
+An explicit transport bypasses configuration and the shared mailer without changing them.
+`mailer()` without an argument retrieves the lazy shared `Mailer`, also used by constructor
+injection. Existing explicit `Mailer::class` overrides still work. `new Mailer()` resolves the
+configured transport; `new Mailer($transport)` uses that instance directly. `mail()` creates a
+message through the shared mailer. `setContent($body)` means HTML; pass `false` for plain text.
+Dummy captures are cloned at send time and kept only in memory. Use `clear()` between tests or
+worker jobs. For previews across browser requests, see the documented file-outbox recipe.
 
 ## Change it here
 
 Start with [Mail](src/Models/Mail.php), [Mailer](src/Core/Mailer.php),
-[TransportInterface](src/Core/TransportInterface.php), [transports](src/Core/Transport/) and
-[bootstrap](bootstrap.php). A binding for `TransportInterface` alone does not alter the default
-mailer, whose factory directly constructs `MailTransport`; rebind `Mailer::class` as well.
-Preserve recipient/header validation and attachment behavior. Keep external delivery out of
-routine tests. The shipped transport throws `MailException` on failure; custom transports
-may report `false`, so callers must follow the selected transport's contract.
+[TransportInterface](src/Core/TransportInterface.php), [transports](src/Core/Transport/),
+[configuration](src/config.php) and [bootstrap](bootstrap.php). A generic `TransportInterface`
+binding does not override the configured class. Keep transport resolution lazy so application
+bootstrap can register factories before they are used. Preserve recipient/header validation
+and attachment behavior. Keep external delivery out of routine tests. `MailTransport` throws
+`MailException` on failure; custom transports may report `false`.
 
 ## Verify
 
