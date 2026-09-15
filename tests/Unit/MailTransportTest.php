@@ -87,7 +87,7 @@ class MailTransportTest extends NafTestCase
 
         $this->assertStringContainsString(
             'Content-Disposition: attachment; filename="file.txt"',
-            $body
+            $body,
         );
         $this->assertStringContainsString('Content-Transfer-Encoding: base64', $body);
 

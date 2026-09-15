@@ -8,12 +8,10 @@ use Naf\Mail\Models\Mail;
 
 interface TransportInterface
 {
-
     /**
      * @param Mail $mail
      *
      * @return bool
      */
     public function sendMail(Mail $mail): bool;
-
 }
