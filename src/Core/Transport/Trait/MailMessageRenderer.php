@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Naf\Mail\Core\Transport\Trait;
 
+use InvalidArgumentException;
 use Naf\Mail\Models\Mail;
 
 trait MailMessageRenderer
 {
-
     /**
      * @param Mail $mail
      *
@@ -17,17 +17,17 @@ trait MailMessageRenderer
     protected function render(Mail $mail): array
     {
         if (empty($mail->getRecipients())) {
-            throw new \InvalidArgumentException('At least one recipient is required');
+            throw new InvalidArgumentException('At least one recipient is required');
         }
 
-        $to = implode(',', $mail->getRecipients());
+        $to      = implode(',', $mail->getRecipients());
         $subject = mb_encode_mimeheader($mail->getSubject(), 'UTF-8');
 
-        $boundary = md5(uniqid((string)mt_rand(), true));
-        $eol = "\r\n";
+        $boundary = md5(uniqid((string) mt_rand(), true));
+        $eol      = "\r\n";
 
         // Headers
-        $header  = 'MIME-Version: 1.0' . $eol;
+        $header = 'MIME-Version: 1.0' . $eol;
         $header .= 'Content-Type: multipart/mixed; boundary="' . $boundary . '"' . $eol;
         $header .= 'From: ' . $mail->getFrom() . $eol;
         $header .= 'Reply-To: ' . $mail->getReplyTo() . $eol;
@@ -78,5 +78,4 @@ trait MailMessageRenderer
     {
         return str_replace(["\r", "\n"], [' ', ' '], $string);
     }
-
 }

@@ -79,3 +79,7 @@ and controlled attachment fixtures. Verify messages/headers and failure behavior
 sending real mail. No `analyse` script is declared.
 
 User docs: [Mail and local testing](https://nafphp.github.io/docs/mail/).
+
+Follow the shared [PHP code style](https://github.com/nafphp/docs/blob/main/CODE_STYLE.md)
+and `.php-cs-fixer.dist.php`. Run `composer style:check`; `composer style:fix` applies the rules.
+Keep logical steps and local names readable, preserving public signatures and template output.

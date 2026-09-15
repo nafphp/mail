@@ -7,8 +7,10 @@ namespace Tests\Unit;
 use Naf\Mail\Core\Mailer;
 use Naf\Mail\Core\Transport\DummyTransport;
 use Tests\NafTestCase;
+
 use function Naf\app;
-use function Naf\Mail\{mail, mailer};
+use function Naf\Mail\mail;
+use function Naf\Mail\mailer;
 
 require_once __DIR__ . '/../Fixtures/MailFunctionStub.php';
 
@@ -19,8 +21,8 @@ class DummyTransportTest extends NafTestCase
         unset($GLOBALS['__naf_last_mail__']);
 
         $transport = new DummyTransport();
-        $mailer = new Mailer($transport);
-        $file = tempnam(sys_get_temp_dir(), 'naf_mail_');
+        $mailer    = new Mailer($transport);
+        $file      = tempnam(sys_get_temp_dir(), 'naf_mail_');
         $this->assertNotFalse($file);
         $this->tempFiles[] = $file;
         file_put_contents($file, 'attachment content');
@@ -57,10 +59,10 @@ class DummyTransportTest extends NafTestCase
 
     public function testRepeatedSendsCaptureEachVersionAndClearAllowsReuse(): void
     {
-        $transport = new DummyTransport();
+        $transport      = new DummyTransport();
         $otherTransport = new DummyTransport();
-        $mailer = new Mailer($transport);
-        $mail = $mailer->createMail()->setSubject('First');
+        $mailer         = new Mailer($transport);
+        $mail           = $mailer->createMail()->setSubject('First');
 
         $this->assertSame([], $transport->getMessages());
         $mailer->send($mail);
@@ -80,9 +82,9 @@ class DummyTransportTest extends NafTestCase
 
     public function testApplicationBindingConnectsMailHelpersToDummyTransport(): void
     {
-        $container = app()->container();
+        $container      = app()->container();
         $previousMailer = mailer();
-        $transport = new DummyTransport();
+        $transport      = new DummyTransport();
 
         try {
             $container->set(Mailer::class, static fn() => new Mailer($transport));

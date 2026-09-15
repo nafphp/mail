@@ -6,7 +6,9 @@ namespace Naf\Mail\Core;
 
 use Naf\Mail\Exceptions\MailException;
 use Naf\Mail\Models\Mail;
-use function Naf\{app, config};
+
+use function Naf\app;
+use function Naf\config;
 
 class Mailer
 {
@@ -16,7 +18,7 @@ class Mailer
      * An explicit transport bypasses configuration and container resolution.
      */
     public function __construct(
-        ?TransportInterface $transport = null
+        ?TransportInterface $transport = null,
     ) {
         $this->transport = $transport ?? $this->resolveTransport();
     }

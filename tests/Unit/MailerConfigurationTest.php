@@ -9,14 +9,20 @@ use Fixtures\ScalarTransport;
 use Naf\Core\Config;
 use Naf\Exceptions\ContainerException;
 use Naf\Mail\Core\Mailer;
-use Naf\Mail\Core\Transport\{DummyTransport, MailTransport};
+use Naf\Mail\Core\Transport\DummyTransport;
+use Naf\Mail\Core\Transport\MailTransport;
 use Naf\Mail\Core\TransportInterface;
 use Naf\Mail\Exceptions\MailException;
 use Naf\Mail\Models\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RuntimeException;
+use stdClass;
 use Tests\NafTestCase;
-use function Naf\{app, config};
-use function Naf\Mail\{mail, mailer};
+
+use function Naf\app;
+use function Naf\config;
+use function Naf\Mail\mail;
+use function Naf\Mail\mailer;
 
 require_once __DIR__ . '/../Fixtures/MailFunctionStub.php';
 
@@ -92,9 +98,10 @@ class MailerConfigurationTest extends NafTestCase
     {
         $this->configure(DependentTransport::class);
         $capture = new DummyTransport();
-        $calls = 0;
+        $calls   = 0;
         app()->container()->set(DependentTransport::class, static function () use ($capture, &$calls) {
             $calls++;
+
             return new DependentTransport($capture);
         });
 
@@ -112,10 +119,10 @@ class MailerConfigurationTest extends NafTestCase
     {
         $this->configure(false);
         app()->container()->set(Mailer::class, static function () {
-            throw new \RuntimeException('Shared mailer must not be resolved');
+            throw new RuntimeException('Shared mailer must not be resolved');
         });
         $transport = new DummyTransport();
-        $message = (new Mail())->setSubject('Explicit');
+        $message   = (new Mail())->setSubject('Explicit');
 
         $this->assertTrue(mailer($transport)->send($message));
         $this->assertEquals([$message], $transport->getMessages());
@@ -127,7 +134,7 @@ class MailerConfigurationTest extends NafTestCase
         $this->configure(DummyTransport::class);
         $configured = new DummyTransport();
         app()->container()->set(DummyTransport::class, $configured);
-        $shared = mailer();
+        $shared   = mailer();
         $explicit = new DummyTransport();
 
         mailer($explicit)->send((new Mail())->setSubject('Explicit'));
@@ -165,7 +172,7 @@ class MailerConfigurationTest extends NafTestCase
         yield 'false' => [false];
         yield 'empty string' => [''];
         yield 'unknown class' => ['MissingTransport'];
-        yield 'unrelated class' => [\stdClass::class];
+        yield 'unrelated class' => [stdClass::class];
         yield 'interface' => [TransportInterface::class];
         yield 'instance' => [new DummyTransport()];
         yield 'array' => [[DummyTransport::class]];
@@ -181,7 +188,7 @@ class MailerConfigurationTest extends NafTestCase
     public function testWrongContainerResultIsRejected(): void
     {
         $this->configure(DummyTransport::class);
-        app()->container()->set(DummyTransport::class, new \stdClass());
+        app()->container()->set(DummyTransport::class, new stdClass());
         $this->expectException(MailException::class);
         $this->expectExceptionMessage('The container binding for ' . DummyTransport::class);
         new Mailer();
@@ -209,7 +216,7 @@ class MailerConfigurationTest extends NafTestCase
     {
         $this->configure(DummyTransport::class);
         app()->container()->set(DummyTransport::class, static function () {
-            throw new \RuntimeException('Transport setup failed');
+            throw new RuntimeException('Transport setup failed');
         });
 
         $this->expectException(ContainerException::class);

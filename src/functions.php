@@ -7,6 +7,7 @@ namespace Naf\Mail;
 use Naf\Mail\Core\Mailer;
 use Naf\Mail\Core\TransportInterface;
 use Naf\Mail\Models\Mail;
+
 use function Naf\app;
 
 /**
