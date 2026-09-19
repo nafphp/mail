@@ -78,7 +78,7 @@ class MailerTest extends NafTestCase
         $this->assertSame($tmpFile, $attachment['path']);
         $this->assertSame(
             chunk_split(base64_encode('dummy content')),
-            $attachment['encoded']
+            $attachment['encoded'],
         );
         $this->assertSame(true, $attachment['inline']);
         $this->assertNotEmpty($attachment['mimetype']);

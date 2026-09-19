@@ -25,7 +25,7 @@ class MailTransport implements TransportInterface
             'to'      => $to,
             'subject' => $subject,
             'header'  => $header,
-            'body'    => $body
+            'body'    => $body,
         ] = $this->render($mail);
 
         if (!mail($to, $subject, $body, $header)) {
@@ -34,5 +34,4 @@ class MailTransport implements TransportInterface
 
         return true;
     }
-
 }

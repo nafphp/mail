@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class NafTestCase extends TestCase
 {
-
     protected array $tempFiles = [];
 
     protected function tearDown(): void
@@ -17,5 +16,4 @@ class NafTestCase extends TestCase
             @unlink($file);
         }
     }
-
 }
