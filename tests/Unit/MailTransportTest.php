@@ -94,6 +94,17 @@ class MailTransportTest extends NafTestCase
         $this->tempFiles[] = $tmpFile;
     }
 
+    public function testHtmlCanIncludeAPlainTextAlternative(): void
+    {
+        $mailer = new Mailer(new MailTransport());
+        $mailer->send($mailer->createMail()->setFrom('from@example.test')->addTo('to@example.test')
+            ->setContent('<p>Hello</p>')->setTextContent('Hello'));
+        $body = $GLOBALS['__naf_last_mail__']['message'];
+        $this->assertStringContainsString('multipart/alternative', $body);
+        $this->assertStringContainsString('text/plain; charset="utf-8"', $body);
+        $this->assertStringContainsString('text/html; charset="utf-8"', $body);
+    }
+
     public function testSendMailThrowsExceptionWhenMailReturnsFalse(): void
     {
         $GLOBALS['__naf_mail_return__'] = false;
