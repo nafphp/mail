@@ -15,6 +15,7 @@ class Mail
     protected string $replyTo          = '';
     protected string $subject          = '';
     protected string $content          = '';
+    protected ?string $textContent     = null;
     protected bool $isHtml             = true;
 
     /** @var array<array{name: string, path: string, encoded: string, mimetype: string, inline: bool}> List of email attachments */
@@ -118,6 +119,19 @@ class Mail
         $this->isHtml  = $isHtml;
 
         return $this;
+    }
+
+    /** Set the plain-text alternative of an HTML message. */
+    public function setTextContent(string $content): static
+    {
+        $this->textContent = $content;
+
+        return $this;
+    }
+
+    public function getTextContent(): ?string
+    {
+        return $this->textContent;
     }
 
     /**

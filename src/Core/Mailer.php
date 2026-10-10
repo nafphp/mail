@@ -28,7 +28,17 @@ class Mailer
      */
     public function createMail(): Mail
     {
-        return new Mail();
+        $mail    = new Mail();
+        $from    = (string) config('mail:from', '');
+        $replyTo = (string) config('mail:reply_to', '');
+        if ($from !== '') {
+            $mail->setFrom($from);
+        }
+        if ($replyTo !== '') {
+            $mail->setReplyTo($replyTo);
+        }
+
+        return $mail;
     }
 
     /**

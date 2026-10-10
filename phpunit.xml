@@ -10,6 +10,7 @@
     <testsuites>
         <testsuite name="NAF Mail Plugin Test Suite">
             <directory>tests</directory>
+            <exclude>tests/Smtp</exclude>
         </testsuite>
     </testsuites>
 

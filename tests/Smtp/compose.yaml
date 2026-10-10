@@ -1,0 +1,39 @@
+name: naf-mail-smtp-test
+services:
+  certificates:
+    build: certs
+    volumes: ["./certificates:/certificates"]
+  starttls:
+    image: axllent/mailpit:v1.31.1
+    environment:
+      MP_SMTP_TLS_CERT: /certificates/cert.pem
+      MP_SMTP_TLS_KEY: /certificates/key.pem
+      MP_SMTP_REQUIRE_STARTTLS: "true"
+      MP_SMTP_AUTH: support@example.test:test-smtp-password
+      MP_SMTP_DISABLE_RDNS: "true"
+    volumes: ["./certificates:/certificates:ro"]
+    ports: ["127.0.0.1:4725:1025", "127.0.0.1:48025:8025"]
+    depends_on:
+      certificates: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+  tls:
+    image: axllent/mailpit:v1.31.1
+    environment:
+      MP_SMTP_TLS_CERT: /certificates/cert.pem
+      MP_SMTP_TLS_KEY: /certificates/key.pem
+      MP_SMTP_REQUIRE_TLS: "true"
+      MP_SMTP_AUTH: support@example.test:test-smtp-password
+      MP_SMTP_DISABLE_RDNS: "true"
+    volumes: ["./certificates:/certificates:ro"]
+    ports: ["127.0.0.1:4765:1025", "127.0.0.1:48026:8025"]
+    depends_on:
+      certificates: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 1s
+      timeout: 3s
+      retries: 60

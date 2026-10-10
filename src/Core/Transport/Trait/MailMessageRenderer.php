@@ -42,9 +42,20 @@ trait MailMessageRenderer
 
         // Body
         $body = '--' . $boundary . $eol;
-        $body .= 'Content-Type: ' . ($mail->isHtml() ? 'text/html' : 'text/plain') . '; charset="utf-8"' . $eol;
-        $body .= 'Content-Transfer-Encoding: 8bit' . $eol . $eol;
-        $body .= $mail->getContent() . $eol;
+        if ($mail->isHtml() && $mail->getTextContent() !== null) {
+            $alternative = $boundary . '-alternative';
+            $body .= 'Content-Type: multipart/alternative; boundary="' . $alternative . '"' . $eol . $eol;
+            foreach (['text/plain' => $mail->getTextContent(), 'text/html' => $mail->getContent()] as $type => $content) {
+                $body .= '--' . $alternative . $eol;
+                $body .= 'Content-Type: ' . $type . '; charset="utf-8"' . $eol;
+                $body .= 'Content-Transfer-Encoding: 8bit' . $eol . $eol . $content . $eol;
+            }
+            $body .= '--' . $alternative . '--' . $eol;
+        } else {
+            $body .= 'Content-Type: ' . ($mail->isHtml() ? 'text/html' : 'text/plain') . '; charset="utf-8"' . $eol;
+            $body .= 'Content-Transfer-Encoding: 8bit' . $eol . $eol;
+            $body .= $mail->getContent() . $eol;
+        }
 
         foreach ($mail->getAttachments() as $attachment) {
 

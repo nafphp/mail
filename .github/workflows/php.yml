@@ -34,3 +34,10 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+
+    - name: Verify SMTP over STARTTLS and implicit TLS
+      run: composer run-script test:smtp
+
+    - name: Stop SMTP fixtures
+      if: always()
+      run: docker compose -f tests/Smtp/compose.yaml down --volumes

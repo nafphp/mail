@@ -16,7 +16,7 @@ verified documentation-only changes can be merged and published by the agent.
 ## What this plugin does
 
 `naf/mail` separates message construction from delivery. Install with `composer require naf/mail`;
-check its `ext-fileinfo` and `ext-mbstring` requirements. Helpers are `Naf\Mail\mail` and `mailer`.
+check its `ext-fileinfo`, `ext-mbstring` and `ext-openssl` requirements. Helpers are `Naf\Mail\mail` and `mailer`.
 The default transport calls PHP's `mail()` and needs an actual delivery setup.
 
 ## Use it
@@ -62,6 +62,20 @@ message through the shared mailer. `setContent($body)` means HTML; pass `false` 
 Dummy captures are cloned at send time and kept only in memory. Use `clear()` between tests or
 worker jobs. For previews across browser requests, see the documented file-outbox recipe.
 
+## SMTP delivery
+
+Since 0.2.3, use `Core\Transport\SmtpTransport`, backed by Symfony Mailer.
+Choose it in `mail:transport`; `mail:smtp` holds host, port, TLS policy and optional
+protocol-specific credentials. Username/password inherit `mail:username` / `mail:password`,
+with From as the default login. Authenticated SMTP requires TLS and verified certificates.
+Validation and network connections stay lazy until send/check; missing SMTP settings must
+not break unrelated application pages. `checkConnection()` sends no message.
+
+`Mailer::createMail()` applies `mail:from` / `mail:reply_to` defaults; explicit setters
+still override them. `Mail::setTextContent()` supplies an HTML message's plain-text
+alternative for both built-in delivery transports. Attachment bytes are captured when
+added, not read again by SMTP. Application-specific views stay in their owning product.
+
 ## Change it here
 
 Start with [Mail](src/Models/Mail.php), [Mailer](src/Core/Mailer.php),
@@ -76,7 +90,10 @@ and attachment behavior. Keep external delivery out of routine tests. `MailTrans
 
 Run `composer test` and `composer validate --strict`. Use [tests](tests/) with capture transports
 and controlled attachment fixtures. Verify messages/headers and failure behavior without
-sending real mail. No `analyse` script is declared.
+sending real mail. `composer test:smtp` additionally starts local Mailpit fixtures and
+checks certificate-verified STARTTLS and implicit TLS, authentication, MIME and failure
+behavior. Stop them with `docker compose -f tests/Smtp/compose.yaml down --volumes`.
+Generated certificates are ignored. No `analyse` script is declared.
 
 User docs: [Mail and local testing](https://nafphp.github.io/docs/mail/).
 
