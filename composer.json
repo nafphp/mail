@@ -39,7 +39,7 @@
     "style:check": "@php vendor/bin/php-cs-fixer fix --dry-run --diff",
     "style:fix": "@php vendor/bin/php-cs-fixer fix",
     "test:smtp": [
-      "docker compose -f tests/Smtp/compose.yaml up -d --build --wait",
+      "docker compose -f tests/Smtp/compose.yaml up -d --build --force-recreate --wait",
       "phpunit -c phpunit.smtp.xml"
     ]
   },
